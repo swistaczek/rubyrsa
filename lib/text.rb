@@ -11,7 +11,7 @@ class Text < Array
     self.reverse!
     push shift
   end
-  public
+  public :scan
   def create_chunks!
     #self.replace(self[0].scan(/.{1,#{@@chunk_size}}/))
     self.replace(self[0].scan(/.{1,#{$options.chunk_size}}/))
@@ -85,6 +85,7 @@ class Text < Array
       ctr = (i+1)*2
       self[i] = (mod(ctr,key.e,key.n) ^ self[i])
     end
+    self.replace(self.join.to_a)
   end
 
 end
