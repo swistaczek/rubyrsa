@@ -41,5 +41,3 @@ if $options.gen_key == true
   text.ctr_decrypt!(key)
   puts "decrypted: " + "#{text}".green
 end
-
-
