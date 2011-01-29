@@ -11,8 +11,8 @@ class Key
     end
     @n = p * q
     @fi = self.euler_func(p,q)
-    @e = 65537
-    #@e=7
+    # @e = 65537
+    @e = self.find_e(@fi)
     @d = self.find_d(@e,@fi)
   end
 end
