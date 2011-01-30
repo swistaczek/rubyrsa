@@ -2,7 +2,6 @@ require 'lib/mathematics'
 class Text < Array
   include Mathematics
   def initialize(t)
-    #@@chunk_size=$options.chunk_size
     @iv = LibTom::Math::Prime::random_of_size($options.chunk_size*3).to_s.to_i
     super(1,t)
   end
@@ -11,10 +10,26 @@ class Text < Array
     self.reverse!
     push shift
   end
-  public :scan
+
   def create_chunks!
-    #self.replace(self[0].scan(/.{1,#{@@chunk_size}}/))
     self.replace(self[0].scan(/.{1,#{$options.chunk_size}}/))
+  end
+  
+  def to_bignum(s)
+    n = 0
+    s.each_byte do |b|
+      n = n * 256 + b
+    end
+    return n
+  end
+
+  def to_string(n)
+    s = ''
+    while n > 0
+      s = (n & 0xFF).chr + s
+      n >>= 8
+    end
+    return s
   end
 
   #CRYPT METHODS
