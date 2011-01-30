@@ -110,8 +110,9 @@ class Text < Array
       temp << (mod(self[i-1],key.e,key.n) ^ self[i])
     end
     #temp.reverse!
+    self.replace(temp)
     self.chunks_to_string!
-    self.replace(temp.join.to_a)
+    self.replace(self.join.to_a)
   end
 
   def ctr_decrypt!(key)
