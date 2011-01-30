@@ -11,7 +11,7 @@ def puts_mode(mode)
 end
 
 if $options.gen_key == true
-  text = Text.new("123456789123456")
+  text = Text.new("abcdefghijklmnopqrstuwxyz")
   puts text
   key = Key.new
   puts_mode "ECB"

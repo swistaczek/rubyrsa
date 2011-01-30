@@ -23,19 +23,32 @@ class Text < Array
     return n
   end
 
+  def chunks_to_bignum!
+    self.map! do |elem|
+      to_bignum(elem)
+    end
+  end
+
   def to_string(n)
     s = ''
     while n > 0
-      s = (n & 0xFF).chr + s
+      s = (n & 0xFF).to_s.to_i.chr + s
       n >>= 8
     end
     return s
+  end
+
+  def chunks_to_string!
+    self.map! do |elem|
+      to_string(elem)
+    end
   end
 
   #CRYPT METHODS
 
   def ecb_crypt!(key)
     self.create_chunks!
+    self.chunks_to_bignum!
     self.each_index do |i|
       self[i]=self[i].to_i #dopisac metoda str2bignum
       self[i]=mod(self[i],key.e,key.n)
@@ -44,6 +57,7 @@ class Text < Array
 
   def cbc_crypt!(key)
     self.create_chunks!
+    self.chunks_to_bignum!
     self << @iv
     self.take(self.length-1).each_index do |i|
       self[i] = self[i].to_i ^ self[i-1]
@@ -53,6 +67,7 @@ class Text < Array
 
   def cfb_crypt!(key)
     self.create_chunks!
+    self.chunks_to_bignum!
     self << @iv
     self.take(self.length-1).each_index do |i|
       self[i] = (mod(self[i-1],key.e,key.n) ^ self[i].to_i)
@@ -61,6 +76,7 @@ class Text < Array
 
   def ctr_crypt!(key)
     self.create_chunks!
+    self.chunks_to_bignum!
     self.each_index do |i|
       ctr = (i+1)*2
       self[i] = (mod(ctr,key.e,key.n) ^ self[i].to_i)
@@ -73,6 +89,7 @@ class Text < Array
     self.each_index do |i|
       self[i]=mod(self[i],key.d,key.n)
     end
+    self.chunks_to_string!
     self.replace(self.join.to_a)
   end
 
@@ -83,6 +100,7 @@ class Text < Array
       self[i] = self[i] ^ self[i+1]
     end
     self.reverse!.shift #usuwa iv
+    self.chunks_to_string!
     self.replace(self.join.to_a)
   end
 
@@ -92,6 +110,7 @@ class Text < Array
       temp << (mod(self[i-1],key.e,key.n) ^ self[i])
     end
     #temp.reverse!
+    self.chunks_to_string!
     self.replace(temp.join.to_a)
   end
 
@@ -100,6 +119,7 @@ class Text < Array
       ctr = (i+1)*2
       self[i] = (mod(ctr,key.e,key.n) ^ self[i])
     end
+    self.chunks_to_string!
     self.replace(self.join.to_a)
   end
 
