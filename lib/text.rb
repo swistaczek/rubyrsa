@@ -45,6 +45,11 @@ class Text < Array
   end
 
   #CRYPT METHODS
+  def crypt!(key)
+    method = $options.mode.downcase + "_crypt!"
+    self.send(method, key)
+  end
+
 
   def ecb_crypt!(key)
     self.create_chunks!
@@ -84,6 +89,10 @@ class Text < Array
   end
 
   #DECRYPT METHODS
+  def decrypt!(key)
+    method = $options.mode.downcase + "_decrypt!"
+    self.send(method, key)
+  end
 
   def ecb_decrypt!(key)
     self.each_index do |i|

@@ -3,7 +3,8 @@ require 'ostruct'
 $options = OpenStruct.new
 $options.bits = 64
 $options.chunk_size = $options.bits/8
-$options.gen_key = true
+$options.gen_key = false
+$options.mode = "cbc"
 
 opts = OptionParser.new
 opts.banner = "Użycie ./rubyrsa.rb [opcje]"
@@ -19,9 +20,20 @@ opts.on("-b", "--bits BITS", "Ustawia liczbę bitów klucza na wartość BITS") 
   $options.chunk_size = $options.bits/8
 end
 
-opts.on("-n", "--no-gen-key", "Nie generuje pary kluczy") do
-  $options.gen_key = false
+opts.on("-n", "--gen-key", "Generuje pary kluczy i kończy działanie") do
+  $options.gen_key = true
+  key = Key.new
+  key.write_key
+  exit(0)
 end
 
+opts.on("-m", "--mode MODE", "Szyfruj w trybie MODE (domyślnie CBC)") do |mode|
+  if mode !~ /(ecb)|(cbc)|(cfb)|(ctr)/i
+    puts "Niepoprawny tryb szyfrowania. Obsługiwane tryby: ECB, CBC, CFB, CTR."
+    exit(0)
+  else
+    $options.mode = mode
+  end
+end
 opts.parse(ARGV)
 

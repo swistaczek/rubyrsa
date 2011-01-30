@@ -7,7 +7,7 @@ require 'lib/options'
 
 class TestKey < Test::Unit::TestCase
   def setup
-    @num = 100
+    @num = 1000
   end
 
   def teardown
