@@ -1,5 +1,6 @@
 require 'optparse'
 require 'ostruct'
+require 'lib/key'
 $options = OpenStruct.new
 $options.bits = 64
 $options.chunk_size = $options.bits/8
