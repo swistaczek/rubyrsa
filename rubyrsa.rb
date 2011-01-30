@@ -1,9 +1,7 @@
 #!/usr/bin/ruby
 
 require 'rubygems'
-require 'libtom/math'
 require 'colorize'
-
 require 'lib/options'
 require 'lib/text'
 require 'lib/key'

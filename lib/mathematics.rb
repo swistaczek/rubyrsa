@@ -1,3 +1,4 @@
+require 'libtom/math'
 module Mathematics
   def euler_func(p,q)
     return (p-1)*(q-1)

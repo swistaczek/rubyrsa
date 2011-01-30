@@ -1,12 +1,9 @@
-require 'test/unit'
 require 'rubygems'
-require 'colorize'
-require 'libtom/math'
+require 'test/unit'
+
 require 'lib/text'
 require 'lib/key'
 require 'lib/options'
-require 'awesome_print'
-
 class TestRubyRSA < Test::Unit::TestCase
   def setup
     @num ||= 5
