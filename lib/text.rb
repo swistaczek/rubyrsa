@@ -1,9 +1,39 @@
-require 'lib/mathematics' 
+require 'lib/mathematics'
+require 'lib/options'
 class Text < Array
   include Mathematics
-  def initialize(t)
+  def initialize(*args)
     @iv = LibTom::Math::Prime::random_of_size($options.chunk_size*3).to_s.to_i
-    super(1,t)
+    if args.size == 0 #new bez parametru - wczytujemy dane z pliku
+      arr = Array.new
+      str = ''
+      if $options.infile == "stdin"
+        $stdin.each_line do |line|
+          if $options.direction == "de" #deszyfrujemy - nie mozemy polaczyc wszystkich linii w jednego stringa
+            arr << line.to_i
+          else
+            str += line
+          end
+        end
+      else
+        File.open($options.infile, "r") do |file|
+          file.each_line do |line|
+            if $options.direction == "de"
+              arr << line.to_i
+            else
+              str += line
+            end
+          end
+        end
+      end
+      if $options.direction == "de"
+        super(1,arr)
+      else
+        super(1,str)
+      end
+    else #new z parametrem - tekst podany jawnie
+      super(1,args[0])
+    end
   end
 
   def rotate
@@ -12,9 +42,9 @@ class Text < Array
   end
 
   def create_chunks!
-    self.replace(self[0].scan(/.{1,#{$options.chunk_size}}/))
+    self.replace(self[0].scan(/[\s\S]{1,#{$options.chunk_size}}/))
   end
-  
+
   def to_bignum(s)
     n = 0
     s.each_byte do |b|
@@ -44,10 +74,22 @@ class Text < Array
     end
   end
 
+  def to_output
+    if $options.outfile == "stdout"
+      puts self
+    else
+      File.open($options.outfile, "w") do |file|
+        file.puts self
+      end
+    end
+  end
+
   #CRYPT METHODS
   def crypt!(key)
-    method = $options.mode.downcase + "_crypt!"
+    self.flatten!
+    method = $options.mode.downcase + "_" + $options.direction + "crypt!"
     self.send(method, key)
+    self.to_output
   end
 
 
@@ -55,7 +97,7 @@ class Text < Array
     self.create_chunks!
     self.chunks_to_bignum!
     self.each_index do |i|
-      self[i]=self[i].to_i #dopisac metoda str2bignum
+      self[i]=self[i]
       self[i]=mod(self[i],key.e,key.n)
     end
   end
@@ -65,7 +107,7 @@ class Text < Array
     self.chunks_to_bignum!
     self << @iv
     self.take(self.length-1).each_index do |i|
-      self[i] = self[i].to_i ^ self[i-1]
+      self[i] = self[i] ^ self[i-1]
       self[i] = mod(self[i],key.e,key.n).to_s.to_i
     end
   end
@@ -89,11 +131,6 @@ class Text < Array
   end
 
   #DECRYPT METHODS
-  def decrypt!(key)
-    method = $options.mode.downcase + "_decrypt!"
-    self.send(method, key)
-  end
-
   def ecb_decrypt!(key)
     self.each_index do |i|
       self[i]=mod(self[i],key.d,key.n)
