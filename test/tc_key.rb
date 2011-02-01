@@ -1,7 +1,6 @@
 require 'rubygems'
 require 'test/unit'
 
-require 'lib/text'
 require 'lib/key'
 require 'lib/options'
 
